@@ -21,6 +21,10 @@ These are the invariants we want to enforce:
 * One cannot call Publish() on a Published Article
 * One cannot call Unpublish() on a Draft Article
 
+Invariants we wish we could enforce:
+
+* One cannot use a variable of a Draft Article after it's been published
+
 ## Conclusions
 
 All solutions will allow the "Use After Publish" problem where a variable with a
