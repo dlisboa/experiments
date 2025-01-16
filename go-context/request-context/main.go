@@ -11,10 +11,15 @@ import (
 // If it was simply a string anyone would be able to overwrite it.
 //
 // For better protection create a different package and never export the key,
-// using methods like `IntoContext/FromContext` to manipulate the context.
+// using methods like `NewContextWithThing/ThingFromContext` to manipulate the
+// context.
+//
 // See user/user.go for an example.
 type contextKey string
 
+// could also be:
+// type userIDKey struct{}
+// using a string is easier if you care to print it
 var userIDKey = contextKey("userID")
 
 func main() {
