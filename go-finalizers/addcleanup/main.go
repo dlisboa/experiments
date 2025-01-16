@@ -39,8 +39,19 @@ func main() {
 	time.Sleep(10 * time.Millisecond)
 	b = nil
 	runtime.GC()
-	// cleanup() runs after GC but no guarantee that it is before these next lines
-	// if the timeout is too small (like 1us) it might run after the Printf at the end
+
+	// cleanup() runs after GC but there is no guarantee that it'll run before these
+	// next lines. If the timeout is too small (like 1us) it might run after
+	// the Printf at the end.
+	//
+	// It is not guaranteed to run at all. From `go doc runtime.AddCleanup`:
+	//
+	// * The cleanup(arg) call is not always guaranteed to run; in particular it is
+	//   not guaranteed to run before program exit.
+	// * Cleanups are not guaranteed to run if the size of T is zero bytes
+	// * It is not guaranteed that a cleanup will run for objects allocated in
+	//   initializers for package-level variables.
+
 	time.Sleep(10 * time.Millisecond)
 	fmt.Printf("after GC, alloc size: %d KiB, blob: %s\n", alloc(), b)
 }
