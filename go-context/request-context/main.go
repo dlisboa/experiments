@@ -6,21 +6,20 @@ import (
 	"net/http"
 )
 
-// Use a custom type to avoid key collision.
-//
-// If it was simply a string anyone would be able to overwrite it.
+// Use a custom type to avoid key collision
 //
 // For better protection create a different package and never export the key,
 // using methods like `NewContextWithThing/ThingFromContext` to manipulate the
 // context.
 //
 // See user/user.go for an example.
-type contextKey string
 
-// could also be:
-// type userIDKey struct{}
-// using a string is easier if you care to print it
-var userIDKey = contextKey("userID")
+type contextKey int
+
+// If there were other context keys increase the integer value so no two keys
+// have the same value. See user/user.go for a slightly easier solution to
+// multiple keys.
+var userCtxKey contextKey = 0
 
 func main() {
 	http.Handle("GET /", middleware(http.HandlerFunc(handler)))
@@ -29,14 +28,16 @@ func main() {
 }
 
 func middleware(h http.Handler) http.Handler {
+	type User struct{}
+
 	fn := func(w http.ResponseWriter, r *http.Request) {
-		ctx := context.WithValue(r.Context(), userIDKey, 123)
+		ctx := context.WithValue(r.Context(), userCtxKey, User{})
 		h.ServeHTTP(w, r.WithContext(ctx))
 	}
 	return http.HandlerFunc(fn)
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	id := r.Context().Value(userIDKey)
-	w.Write([]byte(fmt.Sprintf("id: %d", id)))
+	user := r.Context().Value(userCtxKey)
+	w.Write([]byte(fmt.Sprintf("user: %#+v", user)))
 }
