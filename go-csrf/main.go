@@ -37,7 +37,7 @@ var loggedIn = template.Must(template.New("loggedIn").Parse(loggedInTemplate))
 
 func protect(h http.Handler) http.Handler {
 	csrf := nosurf.New(h)
-	// this is optional, if not cookie is set there's a default `csrf_token` one
+	// this is optional, if cookie is not set there's a default `csrf_token` one
 	// that'll be sent
 	csrf.SetBaseCookie(http.Cookie{
 		Name:     "_csrf",
