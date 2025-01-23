@@ -1,3 +1,7 @@
+```
+Check out files in src/controllers, src/migrations, src/models
+```
+
 # Welcome to Loco :train:
 
 [Loco](https://loco.rs) is a web and API framework running on Rust.
