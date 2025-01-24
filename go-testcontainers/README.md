@@ -13,3 +13,14 @@ To run tests:
 # not needed in normal usage
 $ go test ./users -tags=integration -cache=1
 ```
+
+See files:
+
+* `internal/testdb/testdb.go` - create/migrate/seed and terminate Postgres container
+* `internal/db/db.go` - a `DBTX` interface, similar to what
+  [sqlc](https://github.com/sqlc-dev/sqlc) creates. Allows
+  models/stores/repositories to think it's using a *sql.DB but it's actually
+  inside a transaction
+* `users/store.go` - a "user store" pattern, what we're testing
+* `users/store_test.go` - implements `TestMain` that uses `testdb` to setup Postgres
+* `users/store_gen_test.go` - the actual tests, generated
