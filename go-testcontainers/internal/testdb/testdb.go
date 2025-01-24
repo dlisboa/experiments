@@ -4,12 +4,12 @@ import (
 	"context"
 	"database/sql"
 	"demo/internal/db"
+	"fmt"
 	"log"
 	"sync"
-	"time"
 
 	"github.com/testcontainers/testcontainers-go"
-	"github.com/testcontainers/testcontainers-go/modules/postgres"
+	// "github.com/testcontainers/testcontainers-go/modules/postgres"
 	"github.com/testcontainers/testcontainers-go/wait"
 
 	_ "github.com/lib/pq"
@@ -18,31 +18,57 @@ import (
 var (
 	sqldb     *sql.DB
 	once      sync.Once
-	container *postgres.PostgresContainer
+	container testcontainers.Container
 )
 
 func Create() {
 	ctx := context.TODO()
 
 	once.Do(func() {
-		ctr, err := postgres.Run(
-			ctx,
-			"postgres:16-alpine",
-			testcontainers.WithWaitStrategy(
-				wait.ForLog("database system is ready to accept connections").
-					WithOccurrence(2).
-					WithStartupTimeout(5*time.Second)),
-		)
+		req := testcontainers.ContainerRequest{
+			Name:         "mytest_postgres",
+			Image:        "postgres:16-alpine",
+			ExposedPorts: []string{"5432/tcp"},
+			Env: map[string]string{
+				"POSTGRES_USER":     "testuser",
+				"POSTGRES_PASSWORD": "testpassword",
+				"POSTGRES_DB":       "testdb",
+			},
+			WaitingFor: wait.ForLog("database system is ready to accept connections").WithStartupTimeout(30 * 1000000000),
+		}
+
+		ctr, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
+			ContainerRequest: req,
+			Started:          true,
+			Reuse:            true,
+		})
+
 		if err != nil {
 			log.Fatal(err)
 		}
 		container = ctr
 
-		conn, err := ctr.ConnectionString(ctx, "sslmode=disable")
+		// Fetch host and port
+		host, err := container.Host(ctx)
 		if err != nil {
-			log.Fatalf("testdb: connection string: %v", err)
+			log.Fatal(err)
 		}
-		db, err := sql.Open("postgres", conn)
+
+		port, err := container.MappedPort(ctx, "5432")
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		// Build connection string
+		dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+			host,
+			port.Port(),
+			"testuser",
+			"testpassword",
+			"testdb",
+		)
+
+		db, err := sql.Open("postgres", dsn)
 		if err != nil {
 			log.Fatalf("testdb: cannot open db: %v", err)
 		}
@@ -63,6 +89,10 @@ func Migrate() {
 	_, err := sqldb.Exec(`
 	CREATE TABLE users (
 		name text
+	);
+
+	CREATE table movies (
+		name text
 	)`)
 	if err != nil {
 		log.Fatal(err)
@@ -74,7 +104,10 @@ func Seed() {
 		log.Fatal("testdb: called Seed() with no container; call Create() first")
 	}
 
-	_, err := sqldb.Exec(`INSERT INTO users (name) VALUES ('John Lennon'), ('Paul McCarthy')`)
+	_, err := sqldb.Exec(`
+		INSERT INTO users (name) VALUES ('John Lennon'), ('Paul McCarthy');
+		INSERT INTO movies (name) VALUES ('Titanic'), ('Central Station');
+	`)
 	if err != nil {
 		log.Fatal(err)
 	}
