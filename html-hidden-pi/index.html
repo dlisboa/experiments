@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>The Net</title>
+    <style>
+      details.the-net {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+		color: #333;
+		cursor: pointer;
+		
+		&:not([open]) > summary::-webkit-details-marker {
+		  display: none;
+		}
+      }
+    </style>
+  </head>
+  <body>
+    <h1>The Net</h1>
+    <details class="the-net">
+      <summary>ᴨ</summary>
+      <p>go: 1.25</p>
+      <p>git: 37d93af</p>
+    </details>
+  </body>
+</html>
