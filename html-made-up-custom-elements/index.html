@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+  <link rel="preconnect" href="https://i.pravatar.cc">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <o-layout>
+    <o-topbar>
+      <header aria-label="topbar">
+        <img src="https://i.pravatar.cc/300" alt="logo">
+        <!-- or you can do this -->
+        <!-- <h1>my logo</h1> -->
+
+        <nav>
+          <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </nav>
+
+        <o-avatar>
+          <img src="https://i.pravatar.cc/300" alt="Avatar">
+        </o-avatar>
+      </header>
+    </o-topbar>
+
+    <o-sidebar>
+      <nav>
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </nav>
+    </o-sidebar>
+
+    <main>
+      <div style="display: flex; column-gap: 1ch">
+        <div style="flex-direction: column;">
+          <o-skeleton style="width: 20ch; height: 1ch; margin-bottom: 1ch"></o-skeleton>
+          <o-skeleton style="width: 30ch; height: 1ch;"></o-skeleton>
+        </div>
+      </div>
+    </main>
+  </o-layout>
+
+  <br>
+
+  <o-foobar>this will be overwritten by the shadow root</o-foobar>
+  <o-bar>
+    <template shadowrootmode="open">
+      <a href="#">foobar</a>
+    </template>
+  </o-bar>
+  <script>
+    class FooBar extends HTMLElement {
+      constructor() {
+        super();
+        this.root = this.attachShadow({ mode: 'open' });
+        this.root.appendChild(document.createTextNode('Hello World'));
+      }
+    }
+
+    customElements.define('o-foobar', FooBar);
+  </script>
+
+  <script>
+    // utils
+    Object.prototype.assign = function(other) { return Object.assign(this, other) }
+    D = document
+    D.create = D.createElement
+  </script>
+
+  <script>
+    setTimeout(() => {
+      const h = `
+        <div style="opacity: 0; transition: opacity 0.8s ease-in-out;">
+          <p>this replaces the skeleton</p>
+          <p>this replaces the skeleton too</p>
+        </p>
+      `
+
+      const main = document.querySelector('main')
+      main.innerHTML = h
+
+      setTimeout(() => {
+        main.querySelector(':first-child').style.opacity = 1
+      }, 50)
+    }, 1000)
+  </script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+.w-100px {
+  width: 100px;
+}
+
+.mb-2 {
+  margin-bottom: calc(var(--theme-spacing) / 2);
+}
+
+o-flex {
+  display: flex;
+
+  &[column] {
+    flex-direction: column;
+  }
+}
+
+o-flex[column-gap="1"] {
+  column-gap: var(--theme-spacing);
+}
+
+o-flex[column-gap="2"] {
+  column-gap: var(--theme-spacing) * 2;
+}
+
+p {
+  margin: 0;
+  margin-bottom: 1ch;
+}

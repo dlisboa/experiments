@@ -1,0 +1,7 @@
+@layer animations, background, comp, theme, utils;
+
+@import "./animations.css" layer(animations);
+@import "./background.css" layer(background);
+@import "./theme.css" layer(theme);
+@import "./comps.css" layer(comp);
+@import "./utils.css" layer(utils);

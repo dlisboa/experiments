@@ -1,0 +1,10 @@
+:root {
+  color-scheme: light dark;
+
+  --theme-spacing: 16px;
+  --theme-font-family: system-ui, sans-serif;
+  --theme-light-background: rgb(230, 230, 230);
+  --light: var(--theme-light-background);
+  --theme-dark-background: rgb(67, 67, 97);
+  --dark: var(--theme-dark-background);
+}

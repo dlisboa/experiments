@@ -1,0 +1,8 @@
+o-skeleton {
+  display: block;
+  background-color: rgb(186, 186, 186);
+  min-height: 1em;
+  border-radius: 4px;
+
+  animation: pulse 2s ease-in-out infinite;
+}

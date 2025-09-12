@@ -1,0 +1,54 @@
+/**
+ * o-topbar: (display: flex)
+ *
+ * A topbar component with a logo and navigation links.
+ *
+ * Usage:
+ * <o-topbar>
+ *   <header>
+ *     <img src="logo.png" alt="Logo">
+ *     <nav>
+ *       <ul>
+ *         <li><a href="#">About</a></li>
+ *       </ul>
+ *     </nav>
+ *   </header>
+ * </o-topbar>
+ */
+
+o-topbar {
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    & h1 {
+      margin: 0;
+      font-family: var(--theme-font-family);
+    }
+
+    & > img:first-of-type {
+      width: 80px;
+      height: 80px;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+
+    & nav {
+      ul {
+        list-style: none;
+        display: flex;
+        gap: calc(var(--theme-spacing) * 2);
+        padding: 0;
+        margin: 0;
+
+        & li {
+          a {
+            text-decoration: none;
+            color: inherit;
+          }
+        }
+      }
+    }
+  }
+}
