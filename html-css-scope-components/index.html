@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    :root {
+      color: green;
+      font-size: 24px;
+    }
+  </style>
+</head>
+
+<body>
+  <p>this should be green</p>
+  <o-article>
+    <style>
+      @scope {
+        color: red;
+      }
+    </style>
+
+    <p>this should be red, but same size as above</p>
+  </o-article>
+
+  <o-article>
+    <style>
+      @scope {
+        /* resets every property to initial values, including in this case `font-size` */
+        all: initial;
+        color: blue;
+      }
+    </style>
+
+    <p>this should be blue, but regular size</p>
+  </o-article>
+
+  <o-columns>
+    <style>
+      @scope {
+
+        /* applies to the parent, <o-columns> in this case */
+        :scope {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+        }
+
+        /* resets every property to initial values, including in this case `font-size` */
+        all: initial;
+        color: rebeccapurple;
+      }
+    </style>
+
+    <p>this should be purple, but in regular size and in a column</p>
+    <p>this should be purple, but in regular size and in a column</p>
+    <p>this should be purple, but in regular size and in a column</p>
+    <p>this should be purple, but in regular size and in a column</p>
+  </o-columns>
+</body>
+
+</html>
