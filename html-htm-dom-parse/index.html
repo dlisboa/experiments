@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script type="module">
+    import htm from 'https://esm.sh/htm'
+
+    // creates DOM elements
+    const h = (tag, props, ...children) => {
+      const el = document.createElement(tag)
+      if (props) {
+        for (const [k, v] of Object.entries(props)) {
+          el.setAttribute(k, v)
+        }
+      }
+      for (const c of children) {
+        if (c instanceof Node) {
+          el.appendChild(c)
+        } else {
+          el.innerText = c
+        }
+      }
+      return el
+    }
+    const html = htm.bind(h)
+
+    const result = html`
+      <ul class="foo" data-lol="lol">
+        <li class="foo">
+          <p style="padding: 0">foobar <span>lol</span></p>
+        </li>
+        <li>bar</li>
+      </ul>
+    `
+    console.log('parsed:', result)
+    document.body.appendChild(result)
+    document.body.appendChild(html`<p>last child</p>`)
+  </script>
+</body>
+
+</html>
