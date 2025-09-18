@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Self-referential script tags for components</title>
+  </head>
+  <body>
+    <script defer>
+      // just to make it look nicer
+      const scope = (fn) => {
+        return fn(document.currentScript.parentElement);
+      }
+    </script>
+    <my-component>
+      <label>
+        <p>This is my setting</p>
+        <input name="something_enabled" type="checkbox">
+      </label>
+      <dialog>
+        <p>This will be a destructive change.</p>
+        <label>
+          <input name="confirmation" type="checkbox">
+          Confirm you want to do this:
+        </label>
+        <form method="dialog">
+          <button value="cancel">Cancel</button>
+          <button value="confirm" disabled>Confirm</button>
+        </form>
+      </dialog>
+      <script defer>
+        scope((comp) => {
+        const input = comp.querySelector('input')
+        const dialog = comp.querySelector('dialog')
+        const confirmation = comp.querySelector('dialog input')
+        input.addEventListener('change', ({ target: { checked } }) => {
+          if (checked) {
+            dialog.showModal()
+          }
+        })
+        const button = dialog.querySelector('[value=confirm]')
+        confirmation.addEventListener('change', ({ target: { checked } }) => {
+          button.disabled = !checked
+        })
+        dialog.addEventListener('close', ({ target: { returnValue } }) => {
+          if (returnValue === 'confirm') {
+            console.log('updating')
+            fetch('/update', { method: 'PATCH' })
+            confirmation.checked = false
+            button.disabled = true
+          } else {
+            input.checked = false
+            confirmation.checked = false
+            button.disabled = true
+          }
+        })
+      })
+      </script>
+      <style>
+        @scope {
+        dialog p {
+          color: blue;
+        }
+
+        :scope label:first-child>p {
+          font-size: 20px;
+        }
+
+        :scope > label input[type=checkbox] {
+          width: 20px;
+          height: 20px;
+        }
+      }
+      </style>
+    </my-component>
+  </body>
+</html>
