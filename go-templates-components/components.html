@@ -1,0 +1,50 @@
+{{define "button"}}
+<script>
+function defer(cb) {
+  const scope = document.currentScript.parentNode;
+  document.addEventListener('DOMContentLoaded', () => cb(scope))
+}
+</script>
+{{ $id := uniqueid }}
+<o-button>
+  <button id="{{$id}}" class="{{.Class}}">{{.Text}}</button>
+
+  <script type="module">
+    document.getElementById("{{$id}}").addEventListener('click', function () {
+      console.log('Button {{.Text}} clicked!');
+    });
+  </script>
+
+  <script>
+    defer((scope) => console.log(scope))
+  </script>
+
+  <style>
+    @scope {
+      button {
+        color: red;
+      }
+    }
+  </style>
+</o-button>
+{{end}}
+
+{{define "icon"}}
+<i class="icon-{{.Name}}"></i>
+{{end}}
+
+{{define "card"}}
+<div class="card">
+  <h3>{{.Title}}</h3>
+  <div class="content">{{.Content}}</div>
+  <button>Plain button</button>
+</div>
+{{end}}
+
+{{define "lists"}}
+<ul>
+  {{- range .items}}
+  <li class="item">{{.}}</li>
+  {{- end}}
+</ul>
+{{end}}
