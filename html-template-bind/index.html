@@ -1,94 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title></title>
-</head>
-
-<body>
-  <template id="template-my-counter">
-    <div>
-      <button type="button" onclick="updateResult" props="class disabled aria-label">
-        <slot name="button-text"></slot>
-      </button>
-      <button type="button" onclick="resetCounter">Reset</button>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title></title>
+  </head>
+  <body>
+    <template id="template-my-counter">
       <div>
-        Count:
-        <span class="result-value" props="data-foobar">
-          <slot name="result"></slot>
-        </span>
+        <bind onclick="updateResult" disabled="data-disabled" aria-label="my-label">
+          <button type="button">
+            <slot name="button-text"></slot>
+          </button>
+        </bind>
+        <bind onclick="resetCounter">
+          <button type="button">Reset</button>
+        </bind>
+        <div>
+          Count:
+          <bind data-foobar data-onclick>
+            <span class="result-value">
+              <slot name="result"></slot>
+            </span>
+          </bind>
+          <p>
+            <bind self="value"></bind>
+          </p>
+        </div>
       </div>
-    </div>
-  </template>
+    </template>
+    <script type="module">
+      import { bind } from './bind3';
 
-  <script type="module">
-    function bind(template, context) {
-      // Clone the template content to avoid modifying the original
-      const fragment = template.content.cloneNode(true);
-
-      // Create a TreeWalker to traverse all nodes in the fragment
-      const walker = document.createTreeWalker(
-        fragment,
-        NodeFilter.SHOW_ELEMENT, // Only process element nodes
-        null,
-        false
-      );
-
-      // Walk through all element nodes in the fragment
-      let node;
-      while (node = walker.nextNode()) {
-        const element = node;
-        const attributesToRemove = [];
-
-        // Check all attributes on this element
-        for (const attr of element.attributes) {
-          const attrName = attr.name;
-
-          // If attribute starts with 'on', it's an event handler
-          if (attrName.startsWith('on')) {
-            const eventType = attrName.substring(2); // Remove 'on' prefix
-            const handlerName = attr.value;
-
-            // Check if the context object has a method with this name
-            if (context && typeof context[handlerName] === 'function') {
-              // Add the event listener, binding the context as 'this'
-              element.addEventListener(eventType, context[handlerName].bind(context));
-
-              // Mark this attribute for removal
-              attributesToRemove.push(attrName);
-            }
-          }
-
-          if (attrName === 'props') {
-            const propNames = attr.value.split(' ').filter(name => name.trim());
-
-            // If context is a DOM element, copy the specified attributes
-            if (context && context.getAttribute) {
-              propNames.forEach(propName => {
-                const propValue = context.getAttribute(propName);
-                if (propValue !== null) {
-                  element.setAttribute(propName, propValue);
-                }
-              });
-            }
-
-            // Mark props attribute for removal
-            attributesToRemove.push(attrName);
-          }
-        }
-
-        // Remove the 'on*' attributes after processing
-        attributesToRemove.forEach(attrName => {
-          element.removeAttribute(attrName);
-        });
-      }
-
-      return fragment;
-    }
-
-    // Get the template
     const tmpl = document.getElementById("template-my-counter");
 
     class MyCounter extends HTMLElement {
@@ -109,6 +52,10 @@
         console.log('Reset clicked:', ev.target)
         this.count = 0;
         this.updateDisplay();
+      }
+
+      onClick(ev) {
+        console.log('onclick event', ev.target)
       }
 
       updateDisplay() {
@@ -138,12 +85,10 @@
 
     // Define the custom element
     customElements.define('my-counter', MyCounter);
-  </script>
-
-  <my-counter class="foobar" data-foobar="true">
-    <span slot="button-text" style="pointer-events: none">Click me</span>
-    <span slot="result">inital result</span>
-  </my-counter>
-</body>
-
+    </script>
+    <my-counter data-foobar="true" my-label="this is the area label">
+      <span slot="button-text" style="pointer-events: none">Click me</span>
+      <span slot="result">inital result</span>
+    </my-counter>
+  </body>
 </html>
